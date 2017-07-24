@@ -26,9 +26,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         mParticleView = findViewById(R.id.splash);
-        for (int i = 0; i < 50; i++) {
-            initDataList(i);
-        }
+        initDataList(0);
         mParticleView.startAnim();
         mParticleView.setOnParticleAnimListener(new ParticleView.ParticleAnimListener() {
             @Override

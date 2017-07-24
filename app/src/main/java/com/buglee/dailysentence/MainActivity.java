@@ -9,10 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.buglee.dailysentence.api.RetrofitClient;
 import com.buglee.dailysentence.api.entity.Sentence;
+import com.buglee.dailysentence.api.service.DailyService;
 import com.buglee.dailysentence.ui.Utils;
 import com.buglee.dailysentence.ui.custom.FadeTransitionImageView;
 import com.buglee.dailysentence.ui.custom.HorizontalTransitionLayout;
@@ -22,12 +25,20 @@ import com.stone.pile.libs.PileLayout;
 
 import java.util.ArrayList;
 
+import rx.Observable;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 public class MainActivity extends AppCompatActivity {
     private View positionView;
     private PileLayout pileLayout;
+    private LinearLayout contentView;
     private ArrayList<Sentence> mDataList = new ArrayList<>();
 
     private int lastDisplay = -1;
+
+    private int page = 1;
 
     private ObjectAnimator transitionAnimator;
     private HorizontalTransitionLayout countryView, temperatureView;
@@ -42,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mDataList = getIntent().getParcelableArrayListExtra("data");
+        addData(page);
+        contentView = findViewById(R.id.content);
         positionView = findViewById(R.id.positionView);
         countryView = findViewById(R.id.countryView);
         temperatureView = findViewById(R.id.temperatureView);
@@ -146,7 +159,9 @@ public class MainActivity extends AppCompatActivity {
                 if (lastDisplay < 0) {
                     initSecene(position);
                     lastDisplay = 0;
+                    addData(page);
                 } else if (lastDisplay != position) {
+                    addData(page);
                     transitionSecene(position);
                     lastDisplay = position;
                 }
@@ -154,9 +169,37 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(View view, int position) {
-                super.onItemClick(view, position);
+                /*SharePopupWindow popupWindow = new SharePopupWindow(getApplicationContext(), mDataList.get(position).getFenxiang_img());
+                if (popupWindow.isShowing()) {
+                    popupWindow.dismiss();
+                } else {
+                    popupWindow.showAtLocation(contentView, Gravity.CENTER, 0, 0);
+                }*/
             }
         });
+    }
+
+    public void addData(int count) {
+        DailyService dailyService = RetrofitClient.getInstance().create(DailyService.class);
+        Observable<Sentence> observable = dailyService.getSentence(Utils.getPastDate(count));
+        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Sentence>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Sentence sentence) {
+                        mDataList.add(sentence);
+                        page++;
+                    }
+                });
     }
 
     private void initSecene(int position) {

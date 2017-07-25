@@ -1,2 +1,3 @@
 # Daily
-每日一句英文，API-金山词霸每日一句
+
+![shot](https://github.com/Wiolem/Daily/blob/master/pic/74947973.jpg)

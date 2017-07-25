@@ -1,17 +1,13 @@
 package com.buglee.dailysentence;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.buglee.dailysentence.api.RetrofitClient;
 import com.buglee.dailysentence.api.entity.Sentence;
@@ -20,11 +16,13 @@ import com.buglee.dailysentence.ui.Utils;
 import com.buglee.dailysentence.ui.custom.FadeTransitionImageView;
 import com.buglee.dailysentence.ui.custom.HorizontalTransitionLayout;
 import com.buglee.dailysentence.ui.custom.VerticalTransitionLayout;
-import com.bumptech.glide.Glide;
-import com.stone.pile.libs.PileLayout;
+import com.jkyeo.splashview.SplashView;
 
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+import devs.mulham.horizontalcalendar.HorizontalCalendar;
+import devs.mulham.horizontalcalendar.HorizontalCalendarListener;
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -32,38 +30,35 @@ import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
     private View positionView;
-    private PileLayout pileLayout;
-    private LinearLayout contentView;
-    private ArrayList<Sentence> mDataList = new ArrayList<>();
-
-    private int lastDisplay = -1;
-
-    private int page = 1;
-
-    private ObjectAnimator transitionAnimator;
     private HorizontalTransitionLayout countryView, temperatureView;
     private VerticalTransitionLayout addressView, timeView;
     private FadeTransitionImageView bottomView;
-    private Animator.AnimatorListener animatorListener;
     private TextView descriptionView;
-    private float transitionValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mDataList = getIntent().getParcelableArrayListExtra("data");
-        addData(page);
-        contentView = findViewById(R.id.content);
+        setSplash(getDateString(new Date(System.currentTimeMillis())));
         positionView = findViewById(R.id.positionView);
         countryView = findViewById(R.id.countryView);
         temperatureView = findViewById(R.id.temperatureView);
-        pileLayout = findViewById(R.id.pileLayout);
         addressView = findViewById(R.id.addressView);
         descriptionView = findViewById(R.id.descriptionView);
         timeView = findViewById(R.id.timeView);
         bottomView = findViewById(R.id.bottomImageView);
+        if (!Utils.isNetworkReachable(this)) {
+            setContentView(R.layout.item_empty);
+        }
+        HorizontalCalendar horizontalCalendar = new HorizontalCalendar.Builder(this, R.id.calendarView)
+                .build();
+        horizontalCalendar.setCalendarListener(new HorizontalCalendarListener() {
+            @Override
+            public void onDateSelected(Date date, int position) {
+                addData(date);
 
+            }
+        });
         // 1. 状态栏侵入
         boolean adjustStatusHeight = false;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -74,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
                 getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             }
         }
-
         // 2. 状态栏占位View的高度调整
         String brand = Build.BRAND;
         if (brand.contains("Xiaomi")) {
@@ -89,99 +83,18 @@ public class MainActivity extends AppCompatActivity {
         if (adjustStatusHeight) {
             adjustStatusBarHeight(); // 调整状态栏高度
         }
-
-        animatorListener = new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                countryView.onAnimationEnd();
-                temperatureView.onAnimationEnd();
-                addressView.onAnimationEnd();
-                bottomView.onAnimationEnd();
-                timeView.onAnimationEnd();
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        };
-        // 3. PileLayout绑定Adapter
-        if (!mDataList.isEmpty())
-            bindAdapter();
-        else {
-            setContentView(R.layout.item_empty);
-            Toast.makeText(this, "无网络连接,请检查", Toast.LENGTH_LONG).show();
-        }
-
-
     }
 
-    private void bindAdapter() {
-        pileLayout.setAdapter(new PileLayout.Adapter() {
-            @Override
-            public int getLayoutId() {
-                return R.layout.item_layout;
-            }
-
-            @Override
-            public void bindView(View view, int position) {
-                ViewHolder viewHolder = (ViewHolder) view.getTag();
-                if (viewHolder == null) {
-                    viewHolder = new ViewHolder();
-                    viewHolder.imageView = view.findViewById(R.id.imageView);
-                    view.setTag(viewHolder);
-                }
-
-                Glide.with(MainActivity.this)
-                        .load(mDataList.get(position).getPicture())
-                        .into(viewHolder.imageView);
-            }
-
-            @Override
-            public int getItemCount() {
-                return mDataList.size();
-            }
-
-            @Override
-            public void displaying(int position) {
-                descriptionView.setText(mDataList.get(position).getContent() + "\n" +
-                        mDataList.get(position).getNote());
-                if (lastDisplay < 0) {
-                    initSecene(position);
-                    lastDisplay = 0;
-                    addData(page);
-                } else if (lastDisplay != position) {
-                    addData(page);
-                    transitionSecene(position);
-                    lastDisplay = position;
-                }
-            }
-
-            @Override
-            public void onItemClick(View view, int position) {
-                /*SharePopupWindow popupWindow = new SharePopupWindow(getApplicationContext(), mDataList.get(position).getFenxiang_img());
-                if (popupWindow.isShowing()) {
-                    popupWindow.dismiss();
-                } else {
-                    popupWindow.showAtLocation(contentView, Gravity.CENTER, 0, 0);
-                }*/
-            }
-        });
+    private String getDateString(Date date) {
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        return format.format(date);
     }
 
-    public void addData(int count) {
+    public void addData(Date date) {
+
         DailyService dailyService = RetrofitClient.getInstance().create(DailyService.class);
-        Observable<Sentence> observable = dailyService.getSentence(Utils.getPastDate(count));
+        Observable<Sentence> observable = dailyService.getSentence(getDateString(date));
         observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Sentence>() {
                     @Override
@@ -196,35 +109,18 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(Sentence sentence) {
-                        mDataList.add(sentence);
-                        page++;
+                        transition(sentence);
                     }
                 });
     }
 
-    private void initSecene(int position) {
+    private void transition(Sentence sentence) {
         countryView.firstInit("DAILY");
-        temperatureView.firstInit(mDataList.get(position).getLove());
-        addressView.firstInit(mDataList.get(position).getDateline());
-        bottomView.firstInit(mDataList.get(position).getPicture2());
-        timeView.firstInit(mDataList.get(position).getTranslation());
-    }
-
-    private void transitionSecene(int position) {
-        if (transitionAnimator != null) {
-            transitionAnimator.cancel();
-        }
-
-        countryView.saveNextPosition(position, "DAILY");
-        temperatureView.saveNextPosition(position, mDataList.get(position).getLove());
-        addressView.saveNextPosition(position, mDataList.get(position).getDateline());
-        bottomView.saveNextPosition(position, mDataList.get(position).getPicture2());
-        timeView.saveNextPosition(position, mDataList.get(position).getTranslation());
-
-        transitionAnimator = ObjectAnimator.ofFloat(this, "transitionValue", 0.0f, 1.0f);
-        transitionAnimator.setDuration(300);
-        transitionAnimator.start();
-        transitionAnimator.addListener(animatorListener);
+        descriptionView.setText(String.format("%s\n%s", sentence.getContent(), sentence.getNote()));
+        temperatureView.firstInit(sentence.getLove());
+        addressView.firstInit(sentence.getDateline());
+        bottomView.firstInit(sentence.getPicture2());
+        timeView.firstInit(sentence.getTranslation());
 
     }
 
@@ -238,23 +134,22 @@ public class MainActivity extends AppCompatActivity {
         positionView.setLayoutParams(lp);
     }
 
-    /**
-     * 属性动画
-     */
-    public void setTransitionValue(float transitionValue) {
-        this.transitionValue = transitionValue;
-        countryView.duringAnimation(transitionValue);
-        temperatureView.duringAnimation(transitionValue);
-        addressView.duringAnimation(transitionValue);
-        bottomView.duringAnimation(transitionValue);
-        timeView.duringAnimation(transitionValue);
-    }
+    private void setSplash(String url) {
+        String imgUrl = String.format("http://cdn.iciba.com/web/news/longweibo/imag/%s.jpg", url);
+        // call after setContentView;
+        SplashView.showSplashView(this, 3, R.drawable.splash, new SplashView.OnSplashViewActionListener() {
+            @Override
+            public void onSplashImageClick(String actionUrl) {
 
-    public float getTransitionValue() {
-        return transitionValue;
-    }
+            }
 
-    class ViewHolder {
-        ImageView imageView;
+            @Override
+            public void onSplashViewDismiss(boolean initiativeDismiss) {
+
+            }
+        });
+
+        // call this method anywhere to update splash view data
+        SplashView.updateSplashData(this, imgUrl, "");
     }
 }

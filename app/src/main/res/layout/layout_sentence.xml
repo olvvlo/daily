@@ -1,0 +1,136 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/tools"
+    xmlns:scene="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:orientation="vertical"
+    app:ignore="NamespaceTypo">
+
+    <View
+        android:id="@+id/positionView"
+        android:layout_width="1dp"
+        android:layout_height="1dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.buglee.dailysentence.ui.custom.HorizontalTransitionLayout
+            android:id="@+id/countryView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            scene:leftDistance="100dp"
+            scene:leftMargin="20dp"
+            scene:rightDistance="100dp"
+            scene:textColor="#424242"
+            scene:textSize="22" />
+
+
+        <com.buglee.dailysentence.ui.custom.HorizontalTransitionLayout
+            android:id="@+id/temperatureView"
+            android:layout_width="90dp"
+            android:layout_height="match_parent"
+            scene:leftDistance="60dp"
+            scene:leftMargin="33dp"
+            scene:rightDistance="60dp"
+            scene:textColor="#ffffff"
+            scene:textSize="15">
+
+            <ImageView
+                android:layout_width="75dp"
+                android:layout_height="38dp"
+                android:layout_gravity="center_vertical|right"
+                android:scaleType="centerInside"
+                android:src="@drawable/right" />
+
+        </com.buglee.dailysentence.ui.custom.HorizontalTransitionLayout>
+
+
+    </LinearLayout>
+
+    <devs.mulham.horizontalcalendar.HorizontalCalendarView
+        android:id="@+id/calendarView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        app:selectedDateBackground="#00ffffff"
+        app:selectorColor="#c62828"
+        app:textColorNormal="#bababa"
+        app:textColorSelected="#FFFF" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.buglee.dailysentence.ui.custom.VerticalTransitionLayout
+            android:id="@+id/addressView"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            scene:textColor="#555"
+            scene:textSize="18"
+            scene:verticalDistance="15dp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/descriptionView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:ellipsize="end"
+        android:lineSpacingExtra="2dp"
+        android:textColor="#999"
+        android:textSize="14sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="#ddd" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="256dp">
+
+        <com.buglee.dailysentence.ui.custom.FadeTransitionImageView
+            android:id="@+id/bottomImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/white_gradient" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="-6dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.buglee.dailysentence.ui.custom.VerticalTransitionLayout
+                android:id="@+id/timeView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                scene:textColor="#888"
+                scene:textSize="13"
+                scene:verticalDistance="25dp" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</LinearLayout>

@@ -17,7 +17,8 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.buglee.dailysentence.ui.Utils.isNetworkReachable;
+import static com.buglee.dailysentence.utils.Utils.isNetworkReachable;
+
 
 public class RetrofitClient {
 

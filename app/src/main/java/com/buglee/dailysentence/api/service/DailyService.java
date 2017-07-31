@@ -1,6 +1,6 @@
 package com.buglee.dailysentence.api.service;
 
-import com.buglee.dailysentence.api.entity.Sentence;
+import com.buglee.dailysentence.api.entity.SentenceBean;
 
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -13,5 +13,5 @@ import rx.Observable;
 public interface DailyService {
 
     @GET("dsapi/")
-    Observable<Sentence> getSentence(@Query("date") String date);
+    Observable<SentenceBean> getSentence(@Query("date") String date);
 }

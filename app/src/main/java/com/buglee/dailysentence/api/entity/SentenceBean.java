@@ -9,7 +9,7 @@ import java.util.List;
  * Created by LEE on 2017/7/18 0018.
  */
 
-public class Sentence implements Parcelable {
+public class SentenceBean implements Parcelable {
 
     /**
      * sid : 2662
@@ -43,7 +43,7 @@ public class Sentence implements Parcelable {
     private String fenxiang_img;
     private List<TagsBean> tags;
 
-    protected Sentence(Parcel in) {
+    protected SentenceBean(Parcel in) {
         sid = in.readString();
         tts = in.readString();
         content = in.readString();
@@ -59,15 +59,15 @@ public class Sentence implements Parcelable {
         fenxiang_img = in.readString();
     }
 
-    public static final Creator<Sentence> CREATOR = new Creator<Sentence>() {
+    public static final Creator<SentenceBean> CREATOR = new Creator<SentenceBean>() {
         @Override
-        public Sentence createFromParcel(Parcel in) {
-            return new Sentence(in);
+        public SentenceBean createFromParcel(Parcel in) {
+            return new SentenceBean(in);
         }
 
         @Override
-        public Sentence[] newArray(int size) {
-            return new Sentence[size];
+        public SentenceBean[] newArray(int size) {
+            return new SentenceBean[size];
         }
     };
 

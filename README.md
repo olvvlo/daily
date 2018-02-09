@@ -1,4 +1,6 @@
 # Daily
+##
+[下载地址](https://fir.im/dailyOne)
 ## 一款整合金山词霸每日一句的APP，使用 RxJava + Retrofit2 请求数据。
 ![截图](https://github.com/Wiolem/Daily/blob/master/pic/74947973.jpg)
 ## API

@@ -1,6 +1,8 @@
 package com.buglee.dailysentence.ui;
 
 import android.app.Activity;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -13,6 +15,7 @@ import com.buglee.dailysentence.ui.custom.HorizontalTransitionLayout;
 import com.buglee.dailysentence.ui.custom.VerticalTransitionLayout;
 import com.buglee.dailysentence.utils.Utils;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import devs.mulham.horizontalcalendar.HorizontalCalendar;
@@ -30,6 +33,7 @@ public class MainActivity extends BaseActivity {
     private VerticalTransitionLayout mSubTitleView, mTransView;
     private FadeTransitionImageView mBtmPicView;
     private TextView mDescView;
+    private HorizontalCalendar horizontalCalendar;
 
     @Override
     protected int getContentView() {
@@ -38,11 +42,10 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        //initSplash(getDateString(new Date(System.currentTimeMillis())));
         if (!Utils.isNetworkReachable(this)) {
             setContentView(R.layout.item_empty);
         }
-        HorizontalCalendar horizontalCalendar = new HorizontalCalendar.Builder((Activity) mContext, R.id.calendarView)
+        horizontalCalendar = new HorizontalCalendar.Builder((Activity) mContext, R.id.calendarView)
                 .build();
         horizontalCalendar.setCalendarListener(new HorizontalCalendarListener() {
             @Override
@@ -66,27 +69,45 @@ public class MainActivity extends BaseActivity {
         mBtmPicView = findViewById(R.id.bottomImageView);
     }
 
-    public void addData(Date date) {
+    @Override
+    public void next() {
+        getDate(1);
+    }
 
+    @Override
+    public void pre() {
+        getDate(-1);
+    }
+
+    private void getDate(Integer date) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(horizontalCalendar.getSelectedDate());
+        int day = c.get(Calendar.DATE);
+        c.set(Calendar.DATE, day + date);
+        horizontalCalendar.selectDate(c.getTime(), false);
+    }
+
+
+    public void addData(Date date) {
         DailyService dailyService = RetrofitClient.getInstance().create(DailyService.class);
         Observable<SentenceBean> observable = dailyService.getSentence(getDateString(date));
         observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<SentenceBean>() {
-                    @Override
-                    public void onCompleted() {
+            .subscribe(new Observer<SentenceBean>() {
+                @Override
+                public void onCompleted() {
 
-                    }
+                }
 
-                    @Override
-                    public void onError(Throwable e) {
+                @Override
+                public void onError(Throwable e) {
 
-                    }
+                }
 
-                    @Override
-                    public void onNext(SentenceBean sentenceBean) {
-                        transition(sentenceBean);
-                    }
-                });
+                @Override
+                public void onNext(SentenceBean sentenceBean) {
+                    transition(sentenceBean);
+                }
+            });
     }
 
     private void transition(SentenceBean sentenceBean) {

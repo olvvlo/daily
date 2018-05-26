@@ -1,12 +1,10 @@
 package com.buglee.dailysentence.ui.custom;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
-/**
- * Created by xmuSistone on 2017/5/12.
- */
 
 public abstract class BaseTransitionLayout extends FrameLayout {
 
@@ -32,9 +30,7 @@ public abstract class BaseTransitionLayout extends FrameLayout {
 
     public abstract void firstInit(String info);
 
+    @SuppressLint("MissingSuperCall")
     public abstract void onAnimationEnd();
 
-    public abstract void duringAnimation(float rate);
-
-    public abstract void saveNextPosition(int position, String info);
 }

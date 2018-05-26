@@ -1,5 +1,6 @@
 package com.buglee.dailysentence.ui.custom;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -10,10 +11,6 @@ import android.widget.TextView;
 
 import com.buglee.dailysentence.R;
 
-
-/**
- * Created by xmuSistone on 2017/5/12.
- */
 public class VerticalTransitionLayout extends BaseTransitionLayout {
 
     private TextView textView1, textView2;
@@ -23,7 +20,6 @@ public class VerticalTransitionLayout extends BaseTransitionLayout {
 
     private float textSize = 22;
     private int textColor = Color.BLACK;
-    private int verticalDistance = 50;
 
     public VerticalTransitionLayout(Context context) {
         this(context, null);
@@ -36,10 +32,10 @@ public class VerticalTransitionLayout extends BaseTransitionLayout {
     public VerticalTransitionLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
+        @SuppressLint("CustomViewStyleable")
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.scene);
         textSize = a.getFloat(R.styleable.scene_textSize, textSize);
         textColor = a.getColor(R.styleable.scene_textColor, textColor);
-        verticalDistance = a.getDimensionPixelSize(R.styleable.scene_verticalDistance, verticalDistance);
         a.recycle();
     }
 
@@ -66,6 +62,7 @@ public class VerticalTransitionLayout extends BaseTransitionLayout {
         currentPosition = 0;
     }
 
+    @SuppressLint("MissingSuperCall")
     @Override
     public void onAnimationEnd() {
         currentPosition = nextPosition;
@@ -74,27 +71,4 @@ public class VerticalTransitionLayout extends BaseTransitionLayout {
         textView2 = tmp;
     }
 
-    /**
-     * rate从零到1
-     */
-    @Override
-    public void duringAnimation(float rate) {
-        textView1.setAlpha(1 - rate);
-        textView2.setAlpha(rate);
-
-        if (nextPosition > currentPosition) {
-            textView1.offsetTopAndBottom((int) (0 - verticalDistance * rate - textView1.getTop()));
-            textView2.offsetTopAndBottom((int) (0 + verticalDistance * (1 - rate) - textView2.getTop()));
-        } else {
-            textView1.offsetTopAndBottom((int) (0 + verticalDistance * rate - textView1.getTop()));
-            textView2.offsetTopAndBottom((int) (0 - verticalDistance * (1 - rate) - textView2.getTop()));
-        }
-    }
-
-    @Override
-    public void saveNextPosition(int position, String text) {
-        this.nextPosition = position;
-        this.textView2.setText(text);
-        this.textView2.setAlpha(0);
-    }
 }

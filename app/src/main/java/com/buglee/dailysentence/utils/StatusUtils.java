@@ -1,5 +1,6 @@
 package com.buglee.dailysentence.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.view.Window;
@@ -8,15 +9,9 @@ import android.view.WindowManager;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-/**
- * Created by LEE on 2017/7/31 0031.
- */
-
 public class StatusUtils {
 
-    /**
-     * 获取状态栏高度
-     */
+    @SuppressLint("PrivateApi")
     public static int getStatusBarHeight(Context context) {
         Class<?> c = null;
         Object obj = null;
@@ -34,30 +29,22 @@ public class StatusUtils {
         return statusBarHeight;
     }
 
-    /**
-     * 小米手机设置darkMode
-     */
-    public static boolean setXiaomiDarkMode(Activity activity) {
+    public static void setXiaomiDarkMode(Activity activity) {
         Class<? extends Window> clazz = activity.getWindow().getClass();
         try {
             int darkModeFlag = 0;
+            @SuppressLint("PrivateApi")
             Class<?> layoutParams = Class.forName("android.view.MiuiWindowManager$LayoutParams");
             Field field = layoutParams.getField("EXTRA_FLAG_STATUS_BAR_DARK_MODE");
             darkModeFlag = field.getInt(layoutParams);
             Method extraFlagField = clazz.getMethod("setExtraFlags", int.class, int.class);
             extraFlagField.invoke(activity.getWindow(), darkModeFlag, darkModeFlag);
-            return true;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
     }
 
-    /**
-     * 魅族手机设置darkMode
-     */
-    public static boolean setMeizuDarkMode(Activity activity) {
-        boolean result = false;
+    public static void setMeizuDarkMode(Activity activity) {
         try {
             WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
             Field darkFlag = WindowManager.LayoutParams.class
@@ -71,9 +58,7 @@ public class StatusUtils {
             value |= bit;
             meizuFlags.setInt(lp, value);
             activity.getWindow().setAttributes(lp);
-            result = true;
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
-        return result;
     }
 }

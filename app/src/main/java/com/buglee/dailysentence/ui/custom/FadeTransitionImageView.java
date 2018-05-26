@@ -1,5 +1,6 @@
 package com.buglee.dailysentence.ui.custom;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -8,10 +9,6 @@ import android.widget.ImageView;
 
 import com.buglee.dailysentence.R;
 import com.bumptech.glide.Glide;
-
-/**
- * Created by xmuSistone on 2017/5/12.
- */
 
 public class FadeTransitionImageView extends BaseTransitionLayout {
 
@@ -30,6 +27,7 @@ public class FadeTransitionImageView extends BaseTransitionLayout {
 
     public FadeTransitionImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        @SuppressLint("CustomViewStyleable")
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.scene);
         a.recycle();
     }
@@ -54,6 +52,7 @@ public class FadeTransitionImageView extends BaseTransitionLayout {
         currentPosition = 0;
     }
 
+    @SuppressLint("MissingSuperCall")
     @Override
     public void onAnimationEnd() {
         currentPosition = nextPosition;
@@ -62,18 +61,4 @@ public class FadeTransitionImageView extends BaseTransitionLayout {
         imageView2 = tmp;
     }
 
-    /**
-     * rate从零到1
-     */
-    @Override
-    public void duringAnimation(float rate) {
-        imageView1.setAlpha(1 - rate);
-        imageView2.setAlpha(rate);
-    }
-
-    @Override
-    public void saveNextPosition(int position, String url) {
-        this.nextPosition = position;
-        Glide.with(getContext()).load(url).into(imageView2);
-    }
 }

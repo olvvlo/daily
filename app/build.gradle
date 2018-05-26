@@ -7,8 +7,8 @@ android {
         applicationId "com.buglee.dailysentence"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 101010
-        versionName "1.1.1"
+        versionCode 102010
+        versionName "1.2.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

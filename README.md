@@ -1,19 +1,26 @@
 # Daily
 
-## 下载地址
+## What is this?
+
+An app that integrates Kingsoft's daily sentence.
 
 [daily](https://fir.im/dailyOne)
 
-## 一款整合金山词霸每日一句的APP，使用 RxJava + Retrofit2 请求数据。
-
-![截图](https://github.com/Wiolem/Daily/blob/master/pic/74947973.jpg)
+## Screenshot
+![Screenshot](https://github.com/Wiolem/Daily/blob/master/pic/74947973.jpg)
 
 ## API
 
-- [金山词霸每日一句英语开放API](http://open.iciba.com/dsapi/)
+[http://open.iciba.com/dsapi](http://open.iciba.com/dsapi/)
 
-## 库
+## Library
 
-- [RxJava](https://github.com/ReactiveX/RxJava)
-- [Retrofit](https://github.com/square/retrofit)
-- [Glide](https://github.com/bumptech/glide)
+[RxJava](https://github.com/ReactiveX/RxJava)
+
+[Retrofit](https://github.com/square/retrofit)
+
+[Glide](https://github.com/bumptech/glide)
+
+## License
+
+MIT
